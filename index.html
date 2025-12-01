@@ -5,54 +5,49 @@
   <title>POARTA Control</title>
 
   <!-- Firebase Modular SDK -->
- <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import {
-    getAuth,
-    signInWithEmailAndPassword
-  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import {
-    getDatabase,
-    ref,
-    set
-  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import {
+      getDatabase,
+      ref,
+      set
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-  window.addEventListener("DOMContentLoaded", () => {
-    // Firebase config
+    // --- Firebase Config ---
     const firebaseConfig = {
       apiKey: "AIzaSyC6sUGpNFr4_-jJmZ6HBmQhitAvXsOTt1o",
       authDomain: "poarta-fd61a.firebaseapp.com",
-      databaseURL:
-        "https://poarta-fd61a-default-rtdb.europe-west1.firebasedatabase.app"
+      databaseURL: "https://poarta-fd61a-default-rtdb.europe-west1.firebasedatabase.app",
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // LOGIN
+    // --- Login function ---
     window.login = function () {
       const email = document.getElementById("email").value;
       const pass = document.getElementById("password").value;
 
       signInWithEmailAndPassword(auth, email, pass)
         .then(() => {
-          document.getElementById("loginBox").style.display = "none";
           document.getElementById("control").style.display = "block";
+          alert("Login successful!");
         })
-        .catch(error => {
-          alert("Login failed: " + error.message);
-        });
+        .catch(error => alert(error.message));
     };
 
-    // TRIGGER POARTA
+    // --- Send command ---
     window.triggerPOARTA = function () {
       const commandRef = ref(db, "commands/POARTA");
-      set(commandRef, 1); // number, not string
+      set(commandRef, "ON");
+      alert("POARTA triggered!");
     };
-  });
-</script>
-
+  </script>
 
   <style>
     body {
@@ -61,14 +56,13 @@
       padding: 20px;
       text-align: center;
     }
-    #loginBox,
-    #control {
+    #box {
       background: white;
       padding: 25px;
       width: 320px;
       margin: auto;
       border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
     }
     input {
       width: 90%;
@@ -89,21 +83,26 @@
       margin-top: 10px;
     }
     #control {
+      margin-top: 20px;
       display: none;
     }
   </style>
+
 </head>
 
 <body>
   <h1>POARTA LED Dashboard</h1>
 
-  <!-- Login -->
-  <div id="loginBox">
+  <div id="box">
     <h3>Login</h3>
     <input id="email" placeholder="Email">
     <input id="password" placeholder="Password" type="password">
     <button onclick="login()">Login</button>
+
+    <div id="control">
+      <button onclick="triggerPOARTA()">Open POARTA (5 sec)</button>
+    </div>
   </div>
 
-  <
-
+</body>
+</html>
