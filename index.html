@@ -21,31 +21,37 @@
     const firebaseConfig = {
       apiKey: "AIzaSyC6sUGpNFr4_-jJmZ6HBmQhitAvXsOTt1o",
       authDomain: "poarta-fd61a.firebaseapp.com",
-      databaseURL: "https://poarta-fd61a-default-rtdb.europe-west1.firebasedatabase.app",
+      databaseURL:
+        "https://poarta-fd61a-default-rtdb.europe-west1.firebasedatabase.app"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // --- Login function ---
+    // --- LOGIN ---
     window.login = function () {
       const email = document.getElementById("email").value;
       const pass = document.getElementById("password").value;
 
       signInWithEmailAndPassword(auth, email, pass)
         .then(() => {
+          // Hide login interface completely
+          document.getElementById("loginBox").style.display = "none";
+          // Show POARTA control
           document.getElementById("control").style.display = "block";
-          alert("Login successful!");
         })
-        .catch(error => alert(error.message));
+        .catch(error => {
+          // Only show errors when login fails
+          alert("Login failed: " + error.message);
+        });
     };
 
-    // --- Send command ---
+    // --- POARTA TRIGGER ---
     window.triggerPOARTA = function () {
       const commandRef = ref(db, "commands/POARTA");
-      set(commandRef, 1);
-      alert("POARTA triggered!");
+      set(commandRef, 1); // <-- Send number, not string!
+      // NO ALERTS HERE (quiet mode)
     };
   </script>
 
@@ -56,13 +62,14 @@
       padding: 20px;
       text-align: center;
     }
-    #box {
+    #loginBox,
+    #control {
       background: white;
       padding: 25px;
       width: 320px;
       margin: auto;
       border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     }
     input {
       width: 90%;
@@ -83,28 +90,20 @@
       margin-top: 10px;
     }
     #control {
-      margin-top: 20px;
       display: none;
     }
   </style>
-
 </head>
 
 <body>
   <h1>POARTA LED Dashboard</h1>
 
-  <div id="box">
+  <!-- Login -->
+  <div id="loginBox">
     <h3>Login</h3>
     <input id="email" placeholder="Email">
     <input id="password" placeholder="Password" type="password">
     <button onclick="login()">Login</button>
-
-    <div id="control">
-      <button onclick="triggerPOARTA()">Open POARTA (5 sec)</button>
-    </div>
   </div>
 
-</body>
-</html>
-
-
+  <
