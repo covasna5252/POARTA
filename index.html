@@ -5,19 +5,20 @@
   <title>POARTA Control</title>
 
   <!-- Firebase Modular SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import {
-      getAuth,
-      signInWithEmailAndPassword
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import {
-      getDatabase,
-      ref,
-      set
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+ <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import {
+    getDatabase,
+    ref,
+    set
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // --- Firebase Config ---
+  window.addEventListener("DOMContentLoaded", () => {
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyC6sUGpNFr4_-jJmZ6HBmQhitAvXsOTt1o",
       authDomain: "poarta-fd61a.firebaseapp.com",
@@ -29,31 +30,29 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // --- LOGIN ---
+    // LOGIN
     window.login = function () {
       const email = document.getElementById("email").value;
       const pass = document.getElementById("password").value;
 
       signInWithEmailAndPassword(auth, email, pass)
         .then(() => {
-          // Hide login interface completely
           document.getElementById("loginBox").style.display = "none";
-          // Show POARTA control
           document.getElementById("control").style.display = "block";
         })
         .catch(error => {
-          // Only show errors when login fails
           alert("Login failed: " + error.message);
         });
     };
 
-    // --- POARTA TRIGGER ---
+    // TRIGGER POARTA
     window.triggerPOARTA = function () {
       const commandRef = ref(db, "commands/POARTA");
-      set(commandRef, 1); // <-- Send number, not string!
-      // NO ALERTS HERE (quiet mode)
+      set(commandRef, 1); // number, not string
     };
-  </script>
+  });
+</script>
+
 
   <style>
     body {
@@ -107,3 +106,4 @@
   </div>
 
   <
+
