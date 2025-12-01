@@ -1,26 +1,71 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>POARTA Control</title>
+
+  <!-- Firebase SDK v10 (Modular) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+      text-align: center;
+    }
+    #box {
+      background: white;
+      padding: 25px;
+      width: 320px;
+      margin: auto;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 95%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #0077ff;
+      color: white;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    #control {
+      margin-top: 20px;
+      display: none;
+    }
+  </style>
+
 </head>
 
 <body>
   <h1>POARTA LED Dashboard</h1>
 
-  <div>
-    <input id="email" placeholder="Email"><br>
-    <input id="password" placeholder="Password" type="password"><br>
+  <div id="box">
+    <h3>Login</h3>
+    <input id="email" placeholder="Email">
+    <input id="password" placeholder="Password" type="password">
     <button onclick="login()">Login</button>
-  </div>
 
-  <div id="control" style="display:none;">
-    <button onclick="triggerPOARTA()">Open POARTA (5 sec)</button>
+    <div id="control">
+      <button onclick="triggerPOARTA()">Open POARTA (5 sec)</button>
+    </div>
   </div>
 
 <script>
+/* --- Firebase Initialization --- */
 const firebaseConfig = {
   apiKey: "AIzaSyC6sUGpNFr4_-jJmZ6HBmQhitAvXsOTt1o",
   authDomain: "poarta-fd61a.firebaseapp.com",
@@ -30,21 +75,31 @@ const firebaseConfig = {
   messagingSenderId: "703987909079",
   appId: "1:703987909079:web:4d88cca3698bfdfe3bcb92"
 };
-firebase.initializeApp(firebaseConfig);
 
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.getAuth(app);
+const db = firebase.getDatabase(app);
+
+/* --- Login Function --- */
 function login() {
-  firebase.auth().signInWithEmailAndPassword(
-    document.getElementById("email").value,
-    document.getElementById("password").value
-  ).then(() => {
-    document.getElementById("control").style.display = "block";
-    alert("Login successful!");
-  }).catch(err => alert(err));
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+
+  firebase.signInWithEmailAndPassword(auth, email, pass)
+    .then(() => {
+      document.getElementById("control").style.display = "block";
+      alert("Login successful!");
+    })
+    .catch(error => {
+      alert(error.message);
+    });
 }
 
+/* --- Send Command to POARTA --- */
 function triggerPOARTA() {
-  firebase.database().ref("commands/POARTA").set(1);
-  alert("POARTA triggered");
+  const ref = firebase.ref(db, "commands/POARTA");
+  firebase.set(ref, "ON");
+  alert("POARTA triggered!");
 }
 </script>
 
