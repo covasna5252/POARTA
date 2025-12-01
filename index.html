@@ -4,10 +4,50 @@
   <meta charset="UTF-8">
   <title>POARTA Control</title>
 
-  <!-- Firebase SDK v10 (Modular) -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>
+  <!-- Firebase Modular SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import {
+      getDatabase,
+      ref,
+      set
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // --- Firebase Config ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyC6sUGpNFr4_-jJmZ6HBmQhitAvXsOTt1o",
+      authDomain: "poarta-fd61a.firebaseapp.com",
+      databaseURL: "https://poarta-fd61a-default-rtdb.europe-west1.firebasedatabase.app",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    // --- Login function ---
+    window.login = function () {
+      const email = document.getElementById("email").value;
+      const pass = document.getElementById("password").value;
+
+      signInWithEmailAndPassword(auth, email, pass)
+        .then(() => {
+          document.getElementById("control").style.display = "block";
+          alert("Login successful!");
+        })
+        .catch(error => alert(error.message));
+    };
+
+    // --- Send command ---
+    window.triggerPOARTA = function () {
+      const commandRef = ref(db, "commands/POARTA");
+      set(commandRef, "ON");
+      alert("POARTA triggered!");
+    };
+  </script>
 
   <style>
     body {
@@ -64,41 +104,5 @@
     </div>
   </div>
 
-<script>
-/* --- Firebase Initialization --- */
-const firebaseConfig = {
-  apiKey: "AIzaSyC6sUGpNFr4_-jJmZ6HBmQhitAvXsOTt1o",
-  authDomain: "poarta-fd61a.firebaseapp.com",
-  databaseURL: "https://poarta-fd61a-default-rtdb.europe-west1.firebasedatabase.app",
- };
-
-const app = firebase.initializeApp(firebaseConfig);
-const auth = firebase.getAuth(app);
-const db = firebase.getDatabase(app);
-
-/* --- Login Function --- */
-function login() {
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
-
-  firebase.signInWithEmailAndPassword(auth, email, pass)
-    .then(() => {
-      document.getElementById("control").style.display = "block";
-      alert("Login successful!");
-    })
-    .catch(error => {
-      alert(error.message);
-    });
-}
-
-/* --- Send Command to POARTA --- */
-function triggerPOARTA() {
-  const ref = firebase.ref(db, "commands/POARTA");
-  firebase.set(ref, "ON");
-  alert("POARTA triggered!");
-}
-</script>
-
 </body>
 </html>
-
